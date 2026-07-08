@@ -89,7 +89,7 @@ safeai-assistant/
 ```bash
 cd backend
 npm install
-cp .env.example .env      # fill in your own API keys — never commit real keys
+cp .env.example .env      # fill in your own API keys
 npm start
 ```
 
@@ -124,20 +124,13 @@ Open the extension side panel → **Settings** → enter your backend URL and ac
 
 - **Extension:** Manifest V3, vanilla JS, Vite build
 - **Backend:** Node.js, Express, PostgreSQL
-- **Deployment:** Railway / Render / Vercel / Docker (guides in `docs/`)
+- **Deployment:** Railway / Render / Vercel
 
 ---
 ## 📸 Results
 <img width="540" height="281" alt="image" src="https://github.com/user-attachments/assets/4d14c6c5-f237-40a3-b9be-85b979b3ec5c" />
 <img width="576" height="104" alt="image" src="https://github.com/user-attachments/assets/7f39ab3c-1cac-4f24-9181-5b99a5170068" />
 <img width="731" height="279" alt="image" src="https://github.com/user-attachments/assets/1ce9207e-c172-4878-8bd5-582c2162019c" />
-
-
-## ⚠️ Security Note
-
-This repo ships an `.env.example`, not real credentials. Generate your own API keys for Gemini/OpenAI/Anthropic and your own `DATABASE_URL` — never commit a populated `.env` file.
-
----
 
 ## 📄 License
 
