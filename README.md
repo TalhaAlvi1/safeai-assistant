@@ -14,13 +14,17 @@ SafeAI Assistant is a SaaS security layer for SMBs that use public AI chat tools
 
 ## 📸 Screenshots
 
-| Risk detection panel | Extension in use |
-|---|---|
-| ![Risk analysis panel](docs/screenshots/panel-risk-analysis.jpg) | ![Extension in use](docs/screenshots/extension-inuse.jpg) |
+<img width="822" height="594" alt="image" src="https://github.com/user-attachments/assets/870492ca-5cb3-442c-a562-fb3096174832" />
+<img width="508" height="157" alt="image" src="https://github.com/user-attachments/assets/eaa0d331-6ec8-42ba-b21f-b4fced0673ce" />
+<img width="365" height="567" alt="image" src="https://github.com/user-attachments/assets/34b3bf8a-ec1f-4082-8382-e08d01f8cf44" />
+<img width="344" height="877" alt="image" src="https://github.com/user-attachments/assets/0d503e75-f6cf-4482-b0a4-64a8dc2e6505" />
+<img width="1503" height="945" alt="image" src="https://github.com/user-attachments/assets/c9bd6a2b-6de7-4c73-b4f4-437cc33c9924" />
+<img width="1462" height="881" alt="image" src="https://github.com/user-attachments/assets/917a3aa6-a7f4-49f2-bc35-2abea2a05913" />
 
-| Detection details | Owner dashboard | Settings |
-|---|---|---|
-| ![Detection details](docs/screenshots/panel-detection.jpg) | ![Dashboard](docs/screenshots/dashboard-view.jpg) | ![Settings](docs/screenshots/settings-view.jpg) |
+## 📸 Admin Panel
+<img width="1492" height="776" alt="image" src="https://github.com/user-attachments/assets/07b57cda-fe18-4af8-a39b-bc766f2b7006" />
+<img width="1435" height="862" alt="image" src="https://github.com/user-attachments/assets/83c581f1-e921-4725-a638-245a1f4623bc" />
+
 
 ---
 
@@ -123,6 +127,11 @@ Open the extension side panel → **Settings** → enter your backend URL and ac
 - **Deployment:** Railway / Render / Vercel / Docker (guides in `docs/`)
 
 ---
+## 📸 Results
+<img width="540" height="281" alt="image" src="https://github.com/user-attachments/assets/4d14c6c5-f237-40a3-b9be-85b979b3ec5c" />
+<img width="576" height="104" alt="image" src="https://github.com/user-attachments/assets/7f39ab3c-1cac-4f24-9181-5b99a5170068" />
+<img width="731" height="279" alt="image" src="https://github.com/user-attachments/assets/1ce9207e-c172-4878-8bd5-582c2162019c" />
+
 
 ## ⚠️ Security Note
 
