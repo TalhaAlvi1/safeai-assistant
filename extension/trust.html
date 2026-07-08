@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI Trust & Security</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            color: #333;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #444;
+            margin-top: 30px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .commitment-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .commitment-card h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        footer {
+            margin-top: 60px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 data-i18n="trustPageTitle">SafeAI Trust & Security</h1>
+    <div class="badge" data-i18n="trainingBadge">Verified No-Training</div>
+
+    <div class="commitment-card">
+        <h3 data-i18n="noTrainingCommitment">No-Training Commitment</h3>
+        <p>SafeAI explicitly commits that client content processed through our assistant is <strong>never</strong> used
+            to train public AI models. We provide a secure interface that intercepts and anonymizes data before it
+            reaches LLM providers.</p>
+    </div>
+
+    <div class="commitment-card">
+        <h3 data-i18n="regulatoryTitle">Data Minimization (GDPR/HIPAA Ready)</h3>
+        <p data-i18n="dataMinimizationDesc">We only process content you pass through AI tools. No system-wide scanning.
+        </p>
+        <p>Our architecture follows "Security by Design" principles:</p>
+        <ul>
+            <li>Masking of sensitive PII/PHI (Health Info, IDs, Payments) occurs in real-time.</li>
+            <li>No raw content is stored in our long-term logs—only masked summaries and statistics.</li>
+            <li>Tenants have full rights to export or purge their data at any time.</li>
+        </ul>
+    </div>
+
+    <div class="commitment-card">
+        <h3 data-i18n="highSensitivityTitle">High-Sensitivity Governance</h3>
+        <p data-i18n="highSensitivityDesc">Health info, IDs, and payment data are blocked by default.</p>
+        <p>Firms can configure strict enforcement policies for these categories to prevent accidental leaks of highly
+            sensitive regulatory data.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 SafeAI Security Foundation. All rights reserved.</p>
+    </footer>
+
+    <script src="i18n.js"></script>
+</body>
+
+</html>

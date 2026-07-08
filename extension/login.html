@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .toggle-form a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        #register-form {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="error-message" class="error"></div>
+        <div id="success-message" class="success"></div>
+
+        <!-- Login Form -->
+        <div id="login-form">
+            <h1 data-i18n="loginTitle">Welcome Back</h1>
+            <p class="subtitle" data-i18n="loginSubtitle">Login to SafeAI Assistant</p>
+
+            <div class="form-group">
+                <label for="login-email" data-i18n="emailLabel">Email</label>
+                <input type="email" id="login-email" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="login-password" data-i18n="passwordLabel">Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+
+            <button class="btn btn-primary" id="login-btn" data-i18n="loginBtn">Login</button>
+
+            <div class="toggle-form">
+                Don't have an account? <a href="#" id="show-register">Register</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form">
+            <h1>Create Firm</h1>
+            <p class="subtitle">Set up SafeAI for your organization</p>
+
+            <div class="form-group">
+                <label for="firm-name">Firm Name</label>
+                <input type="text" id="firm-name" placeholder="Your Firm Name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="register-email">Admin Email (Work)</label>
+                <input type="email" id="register-email" placeholder="admin@yourfirm.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="register-password">Admin Password</label>
+                <input type="password" id="register-password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label for="region">Region</label>
+                <select id="region">
+                    <option value="US">United States</option>
+                    <option value="EU">Europe</option>
+                    <option value="IL">Israel</option>
+                    <option value="APAC">Asia-Pacific</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" id="register-btn">Create Tenant & Admin</button>
+
+            <div class="toggle-form">
+                Already have an account? <a href="#" id="show-login">Login</a>
+            </div>
+        </div>
+
+        <!-- Magic Code View -->
+        <div id="magic-code-view" style="display: none;">
+            <h1>Verify Identity</h1>
+            <p class="subtitle">Enter the code sent to your email</p>
+
+            <div class="form-group">
+                <label for="magic-email">Email</label>
+                <input type="email" id="magic-email" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="magic-code">6-Digit Code</label>
+                <input type="text" id="magic-code" placeholder="123456" maxlength="6">
+            </div>
+
+            <button class="btn btn-primary" id="verify-code-btn">Verify & Connect</button>
+            <button class="btn btn-secondary" id="resend-code-btn"
+                style="background: none; color: #667eea; font-size: 13px;">Resend Code</button>
+        </div>
+
+        <!-- SSO View -->
+        <div id="sso-view" style="display: none;">
+            <h1>Connect Account</h1>
+            <p class="subtitle">Login using your work credentials</p>
+
+            <button class="btn btn-secondary" id="google-sso-btn"
+                style="background: white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <img src="https://www.google.com/favicon.ico" width="16" height="16"> Sign in with Google
+            </button>
+
+            <button class="btn btn-secondary" id="microsoft-sso-btn"
+                style="background: white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <img src="https://www.microsoft.com/favicon.ico" width="16" height="16"> Sign in with Microsoft
+            </button>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="login.js"></script>
+</body>
+
+</html>

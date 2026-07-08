@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            color: #374151;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px 12px 0 0;
+            padding: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-bottom: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            border-top: none;
+        }
+
+        .section {
+            padding: 20px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .persona-selector {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .persona-selector:hover {
+            border-color: #2563eb;
+        }
+
+        .persona-selector:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f9fafb;
+            color: #374151;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .feature-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .feature-desc {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #047857;
+            margin-bottom: 12px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results {
+            display: none;
+            padding: 20px;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .risk-badge.low {
+            background: #f0fdf4;
+            color: #065f46;
+        }
+
+        .risk-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .risk-badge.high {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .categories {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .explanation {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 16px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .auth-container {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .auth-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #111827;
+        }
+
+        .auth-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .connected-status {
+            font-size: 12px;
+            color: #065f46;
+            background: #f0fdf4;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">S</div>
+                <div class="logo-text">
+                    <h1 data-i18n="appName">SafeAI Assistant</h1>
+                    <p data-i18n="appSubtitle">Protect your AI interactions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main View (Content) -->
+        <div id="main-view" class="view">
+            <div class="main-content">
+                <!-- Error Message -->
+                <div id="error-message" class="error-message"></div>
+
+                <!-- Connection Status Header -->
+                <div id="connection-status-header" class="section"
+                    style="padding-bottom: 10px; display: flex; justify-content: center; align-items: center;">
+                    <div id="user-info-text" class="connected-status"
+                        style="cursor: pointer; text-decoration: underline; color: #2563eb; font-size: 11px;"
+                        title="Click to logout">Loading session...</div>
+                </div>
+
+                <!-- Persona-Based Analysis Section -->
+                <div class="section">
+                    <div class="section-title" data-i18n="personaAnalysis">Persona Analysis</div>
+                    <div class="info-box" data-i18n="personaInfoBox">
+                        Select a persona to get specialized analysis of your text
+                    </div>
+
+                    <label for="persona-select"
+                        style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #374151;"
+                        data-i18n="selectPersonaLabel">
+                        Select Persona:
+                    </label>
+                    <select id="persona-select" class="persona-selector">
+                        <option value="tax-advisor" data-i18n="taxAdvisor">Tax Advisor</option>
+                        <option value="legal-assistant" data-i18n="legalAssistant">Legal Assistant</option>
+                        <option value="client-explainer" data-i18n="clientExplainer">Client Explainer</option>
+                    </select>
+
+                    <div style="margin-top: 16px;">
+                        <button class="btn btn-primary" id="persona-analyze-btn">
+                            <span data-i18n="analyzeAndProtect">Analyze & protect</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p data-i18n="loading">Analyzing your text...</p>
+                </div>
+
+                <!-- Results -->
+                <div id="results" class="results">
+                    <div id="risk-badge" class="risk-badge"></div>
+                    <div id="categories" class="categories"></div>
+                    <div id="explanation" class="explanation"></div>
+                    <div id="persona-info" class="info-box" style="margin-top: 12px;"></div>
+                    <div id="action-buttons">
+                        <button class="btn btn-primary" id="apply-persona-btn" data-i18n="useSafeVersion">Use Safe
+                            Version</button>
+                        <button class="btn btn-secondary" id="cancel-result-btn" data-i18n="cancel">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="section">
+                    <div class="section-title">Features</div>
+                    <div class="feature-grid">
+                        <div class="feature-card" id="open-wizard">
+                            <div class="feature-icon">📄</div>
+                            <div class="feature-title" data-i18n="wizardTitle">Document Wizard</div>
+                            <div class="feature-desc" data-i18n="wizardDesc">Upload & analyze documents</div>
+                        </div>
+                        <div class="feature-card" id="open-dashboard">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-title">Dashboard</div>
+                            <div class="feature-desc">View analytics</div>
+                        </div>
+                        <div class="feature-card" id="open-settings">
+                            <div class="feature-icon">⚙️</div>
+                            <div class="feature-title" data-i18n="settingsTitle">Settings</div>
+                            <div class="feature-desc" data-i18n="settingsDesc">Configure options</div>
+                        </div>
+                        <div class="feature-card" id="view-help">
+                            <div class="feature-icon">❓</div>
+                            <div class="feature-title">Help</div>
+                            <div class="feature-desc">Get support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth View -->
+        <div id="auth-view" class="view active">
+            <div class="main-content">
+                <div class="auth-container">
+                    <div class="auth-title" data-i18n="welcomeMessage">Welcome to SafeAI</div>
+                    <div class="auth-desc" data-i18n="welcomeDesc">Connect your account to start secure AI interactions
+                        with your firm's
+                        policies.</div>
+
+                    <div id="auth-error" class="error-message"></div>
+
+                    <div class="input-group">
+                        <label for="work-email">Work Email</label>
+                        <input type="email" id="work-email" class="input-field" placeholder="name@yourfirm.com">
+                    </div>
+
+                    <button class="btn btn-primary" id="connect-btn">
+                        Connect Account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 8px;">
+                <p style="font-weight: 600; margin-bottom: 4px; color: #374151;" data-i18n="trustLine">SafeAI does not
+                    train on your
+                    data. Masking active.</p>
+                <a href="trust.html" target="_blank" style="text-decoration: underline; font-size: 11px;"
+                    data-i18n="trainingBadge">Verified No-Training</a>
+            </div>
+            <p>SafeAI Assistant v2.0 | <a href="http://localhost:3000/health" target="_blank">Status</a></p>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="panel.js"></script>
+</body>
+
+</html>

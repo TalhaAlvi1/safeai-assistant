@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI Assistant - User Guide</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --accent: #edf2f7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .step-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step-number {
+            font-weight: 800;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .alert-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            color: #795548;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            background: var(--accent);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        .feature-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--accent);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--accent);
+            color: var(--primary);
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>SafeAI Assistant Guide</h1>
+            <p class="subtitle">Secure your AI interactions effortlessly</p>
+        </header>
+
+        <section>
+            <h2><span>🚀</span> How To Test the Extension</h2>
+            <p>Ready to see SafeAI in action? Follow these simple steps to verify the privacy protection:</p>
+
+            <div class="step-card">
+                <p><span class="step-number">01.</span> Open your favorite AI platform, such as
+                    <strong>ChatGPT</strong>, <strong>Claude</strong>, or <strong>Gemini</strong>.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <p><span class="step-number">02.</span> In the message box, try typing something sensitive. For
+                    example:<br>
+                    <em style="color: var(--text-muted);">"My private email is test@company.com and my phone number is
+                        123-456-7890."</em>
+                </p>
+            </div>
+
+            <div class="step-card">
+                <p><span class="step-number">03.</span> <strong>Notice the Warning:</strong> As you type, a thin orange
+                    line or a warning box will appear above your message, alerting you that sensitive data was detected.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <p><span class="step-number">04.</span> <strong>Anonymize with One Click:</strong> Click the "Fix
+                    (Anonymize)" button. Watch as your private details are instantly replaced with safe placeholders
+                    like <code>[EMAIL_1]</code>.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2><span>🧭</span> Key Features</h2>
+
+            <div class="feature-item">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-content">
+                    <h3>Smart PII Detection</h3>
+                    <p>SafeAI automatically finds names, emails, addresses, and financial data as you type, so you never
+                        accidentally share more than you intended.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🎭</div>
+                <div class="feature-content">
+                    <h3>Persona Analysis <span class="badge">New</span></h3>
+                    <p>Open the SafeAI Side Panel to select a specialist (like a Legal Assistant or Tax Advisor). They
+                        will check your prompt to ensure it follows professional guidelines.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">🧙</div>
+                <div class="feature-content">
+                    <h3>Document Wizard</h3>
+                    <p>Need to analyze a whole file? Use the Document Wizard to safely scan PDFs and documents for
+                        sensitive data before uploading them to AI tools.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2><span>💡</span> Pro Tips</h2>
+            <p>• <strong>Stay Connected:</strong> Ensure the icon in the panel says "Connected". This ensures your
+                company's privacy policies are active.</p>
+            <p>• <strong>Use Side-Panel:</strong> Click the SafeAI extension icon in your toolbar to keep the analysis
+                results visible while you work.</p>
+            <p>• <strong>Keyboard Shortcut:</strong> Press <code>Ctrl+Shift+S</code> to quickly open or close the SafeAI
+                panel.</p>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 SafeAI Systems. All rights reserved.</p>
+            <p>SafeAI Assistant - Making AI Privacy Simple.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+{
+  "manifest_version": 3,
+  "name": "SafeAI Assistant",
+  "version": "2.0.0",
+  "description": "Complete AI safety with multilingual support, personas, and document processing",
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://chatgpt.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://x.ai/*",
+    "https://x.com/*",
+    "https://grok.x.ai/*",
+    "https://chat.deepseek.com/*",
+    "https://www.perplexity.ai/*",
+    "http://localhost:3000/*",
+    "https://safeaibackend-production.up.railway.app/*"
+  ],
+  "action": {
+    "default_title": "SafeAI Assistant - Open Panel"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://x.ai/*",
+        "https://x.com/*",
+        "https://grok.x.ai/*",
+        "https://chat.deepseek.com/*",
+        "https://www.perplexity.ai/*"
+      ],
+      "js": [
+        "detectors.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "send-safely": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Open SafeAI panel"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "locales/*.json",
+        "panel.html",
+        "panel.js",
+        "login.html",
+        "login.js",
+        "i18n.js",
+        "help.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
