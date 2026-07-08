@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI | Platform Owner Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Content Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Table */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+
+        /* Badge UI */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-trial {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-pastdue {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal / Detail View */
+        .detail-view {
+            position: fixed;
+            right: -600px;
+            top: 0;
+            width: 600px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease-out;
+            padding: 40px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .detail-view.open {
+            right: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.open {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .sub-section {
+            display: none;
+        }
+
+        .sub-section.active {
+            display: block;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">🚀 SafeAI <span>Platform</span></div>
+        <div class="nav-item active" onclick="switchMainTab('overview')">🌎 Global Overview</div>
+        <div class="nav-item" onclick="switchMainTab('tenants')">🏢 Tenant Management</div>
+        <div class="nav-item">📈 Growth Logs</div>
+        <div class="nav-item" style="margin-top: auto;">⚙️ Settings</div>
+    </div>
+
+    <div class="main">
+        <!-- Overview Section -->
+        <div id="overview-section" class="section active">
+            <div class="header">
+                <h1 class="title">Global Performance</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="loadGlobalStats()">🔄 Refresh Data</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Tenants</div>
+                    <div class="stat-value" id="global-total-tenants">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active (30d)</div>
+                    <div class="stat-value" id="global-active-tenants">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Prompts Checked</div>
+                    <div class="stat-value" id="global-total-prompts">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Wizard Docs</div>
+                    <div class="stat-value" id="global-total-docs">0</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div class="card">
+                    <h3>Tenants by Plan</h3>
+                    <canvas id="planChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Top Regions</h3>
+                    <ul id="top-regions-list" style="margin-top: 15px; list-style: none;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">US East - 12</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">EU West - 8</li>
+                        <li style="padding: 10px 0;">Israel - 5</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tenant Management Section -->
+        <div id="tenants-section" class="section">
+            <div class="header">
+                <h1 class="title">All Tenants</h1>
+                <div class="filters" style="display: flex; gap: 15px;">
+                    <select id="filter-plan" onchange="loadTenants()">
+                        <option value="">All Plans</option>
+                        <option value="pro">Pro</option>
+                        <option value="free">Free</option>
+                        <option value="trial">Trial</option>
+                    </select>
+                    <select id="filter-status" onchange="loadTenants()">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Trial">Trial</option>
+                        <option value="Past due">Past due</option>
+                        <option value="Suspended">Suspended</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Firm Name</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Last Active</th>
+                            <th>Users</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tenant-list-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail View Panel -->
+    <div class="overlay" id="detail-overlay" onclick="closeDetail()"></div>
+    <div class="detail-view" id="detail-panel">
+        <div class="header">
+            <h2 id="detail-name">Tenant Name</h2>
+            <button class="btn btn-outline" onclick="closeDetail()">Close</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchDetailTab('overview')">Overview</div>
+            <div class="tab" onclick="switchDetailTab('users')">Users</div>
+            <div class="tab" onclick="switchDetailTab('subscription')">Subscription</div>
+            <div class="tab" onclick="switchDetailTab('admin')">Admin Actions</div>
+        </div>
+
+        <div id="detail-overview" class="sub-section active">
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div class="stat-card" style="padding: 15px;">
+                    <div class="stat-label">Month Prompts</div>
+                    <div class="stat-value" id="detail-stat-prompts" style="font-size: 24px;">0</div>
+                </div>
+                <div class="stat-card" style="padding: 15px;">
+                    <div class="stat-label">Month Docs</div>
+                    <div class="stat-value" id="detail-stat-docs" style="font-size: 24px;">0</div>
+                </div>
+            </div>
+            <h4>Usage History</h4>
+            <div id="usage-history-chart" style="margin-top: 15px;">
+                <!-- Table or mini-chart -->
+            </div>
+        </div>
+
+        <div id="detail-users" class="sub-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Last Seen</th>
+                    </tr>
+                </thead>
+                <tbody id="detail-user-list"></tbody>
+            </table>
+        </div>
+
+        <div id="detail-subscription" class="sub-section">
+            <div class="form-group">
+                <label class="form-label">Current Plan</label>
+                <select id="action-plan">
+                    <option value="free">Free</option>
+                    <option value="pro">Pro</option>
+                    <option value="trial">Trial</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Billing Status</label>
+                <select id="action-status">
+                    <option value="Active">Active</option>
+                    <option value="Trial">Trial</option>
+                    <option value="Past due">Past due</option>
+                    <option value="Suspended">Suspended</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="updateTenantSettings()">Apply Plan Changes</button>
+        </div>
+
+        <div id="detail-admin" class="sub-section">
+            <div class="form-group">
+                <label class="form-label">Internal Notes</label>
+                <textarea id="action-notes" rows="4" placeholder="Design partner, do not suspend..."></textarea>
+            </div>
+            <button class="btn btn-outline" onclick="updateTenantSettings()">Save Notes</button>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <button class="btn btn-danger" style="width: 100%;">Suspend Entire Firm Access</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let selectedTenantId = null;
+
+        async function api(path, method = 'GET', body = null) {
+            // In dev mode, we might need to prompt for a dummy token if not logged in
+            // For now, assuming session/cookie or bearer from local storage
+            const token = localStorage.getItem('platform_token');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const res = await fetch(`${API_URL}/platform${path}`, {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : null
+            });
+            if (res.status === 401 || res.status === 403) {
+                const dummyToken = prompt("Enter Platform Admin Token (for testing):");
+                if (dummyToken) {
+                    localStorage.setItem('platform_token', dummyToken);
+                    location.reload();
+                }
+            }
+            return res.json();
+        }
+
+        async function loadGlobalStats() {
+            const stats = await api('/global-stats');
+            document.getElementById('global-total-tenants').textContent = stats.total_tenants;
+            document.getElementById('global-active-tenants').textContent = stats.active_tenants;
+            document.getElementById('global-total-prompts').textContent = stats.total_prompts || 0;
+            document.getElementById('global-total-docs').textContent = stats.total_wizard_docs || 0;
+
+            renderPlanChart(stats);
+        }
+
+        function renderPlanChart(stats) {
+            const ctx = document.getElementById('planChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pro', 'Free', 'Trial'],
+                    datasets: [{
+                        label: 'Tenants',
+                        data: [stats.pro_tenants, stats.free_tenants, stats.trial_tenants],
+                        backgroundColor: ['#4f46e5', '#94a3b8', '#f59e0b']
+                    }]
+                }
+            });
+        }
+
+        async function loadTenants() {
+            const plan = document.getElementById('filter-plan').value;
+            const status = document.getElementById('filter-status').value;
+            const tenants = await api(`/tenants?plan=${plan}&status=${status}`);
+
+            const tbody = document.getElementById('tenant-list-body');
+            tbody.innerHTML = tenants.map(t => `
+                <tr onclick="openTenantDetail('${t.id}')">
+                    <td><strong>${t.name}</strong></td>
+                    <td>${t.tier}</td>
+                    <td><span class="status-badge status-${(t.billing_status || 'active').replace(' ', '').toLowerCase()}">${t.billing_status || 'Active'}</span></td>
+                    <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                    <td>${t.last_active_at ? new Date(t.last_active_at).toLocaleDateString() : 'Never'}</td>
+                    <td>${t.active_users || 0}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function openTenantDetail(id) {
+            selectedTenantId = id;
+            const data = await api(`/tenants/${id}`);
+            const t = data.tenant;
+
+            document.getElementById('detail-name').textContent = t.name;
+            document.getElementById('detail-stat-prompts').textContent = data.subscription.usageHighlights.promptsChecked;
+            document.getElementById('detail-stat-docs').textContent = data.subscription.usageHighlights.documentsAnalyzed;
+
+            // Subscription form
+            document.getElementById('action-plan').value = t.tier;
+            document.getElementById('action-status').value = t.billing_status || 'Active';
+            document.getElementById('action-notes').value = t.internal_notes || '';
+
+            // User list
+            document.getElementById('detail-user-list').innerHTML = data.users.map(u => `
+                <tr>
+                    <td>${u.email}</td>
+                    <td>${u.role}</td>
+                    <td>${u.last_seen ? new Date(u.last_seen).toLocaleDateString() : '-'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('detail-panel').classList.add('open');
+            document.getElementById('detail-overlay').classList.add('open');
+        }
+
+        async function updateTenantSettings() {
+            const updates = {
+                tier: document.getElementById('action-plan').value,
+                billing_status: document.getElementById('action-status').value,
+                internal_notes: document.getElementById('action-notes').value
+            };
+
+            await api(`/tenants/${selectedTenantId}`, 'PUT', updates);
+            alert('Tenant updated successfully');
+            loadTenants();
+        }
+
+        function closeDetail() {
+            document.getElementById('detail-panel').classList.remove('open');
+            document.getElementById('detail-overlay').classList.remove('open');
+        }
+
+        function switchMainTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(`${tab}-section`).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (tab === 'tenants') loadTenants();
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            document.getElementById(`detail-${tab}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Initial Load
+        window.onload = () => {
+            loadGlobalStats();
+        };
+    </script>
+</body>
+
+</html>

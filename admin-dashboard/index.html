@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAI Assistant - Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-muted: #666;
+            --border: #e0e0e0;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .nav-tab {
+            padding: 12px 0;
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Overview Page */
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .selector {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            height: 350px;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Details Table */
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--bg);
+            font-size: 14px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-allow {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-warn {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge-block {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .data-type-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #eee;
+            margin-right: 5px;
+            font-size: 10px;
+        }
+
+        /* Settings Page */
+        .settings-section {
+            margin-bottom: 40px;
+        }
+
+        .settings-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .policy-options {
+            display: flex;
+            gap: 20px;
+        }
+
+        .policy-card {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .policy-card:hover {
+            border-color: var(--primary);
+        }
+
+        .policy-card.active {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .policy-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .policy-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Safeguarding Your AI</h1>
+        <p>Organization Security Dashboard</p>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="switchTab('details')">Details</button>
+            <button class="nav-tab" onclick="switchTab('settings')">Settings</button>
+            <button class="nav-tab" onclick="switchTab('subscription')">Subscription</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="controls">
+                <select class="selector" id="time-range" onchange="loadStats()">
+                    <option value="7d">Last 7 days</option>
+                    <option value="30d">Last 30 days</option>
+                </select>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Prompts checked</div>
+                    <div class="metric-value" id="stat-prompts">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Warnings shown</div>
+                    <div class="metric-value" id="stat-warnings">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Messages blocked</div>
+                    <div class="metric-value" id="stat-blocks">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Fixed with SafeAI</div>
+                    <div class="metric-value" id="stat-fixed">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Users protected</div>
+                    <div class="metric-value" id="stat-users">0</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Security Activity Timeline</div>
+                    <canvas id="timelineChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Sensitive Data Distribution</div>
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Tab -->
+        <div id="details" class="tab-content">
+            <div class="card">
+                <div class="filter-bar">
+                    <input type="text" class="selector" id="filter-user" placeholder="Search user proxy..."
+                        oninput="loadLogs()">
+                    <select class="selector" id="filter-action" onchange="loadLogs()">
+                        <option value="">All Actions</option>
+                        <option value="ALLOW">OK</option>
+                        <option value="WARN">WARN</option>
+                        <option value="BLOCK">BLOCK</option>
+                    </select>
+                    <select class="selector" id="filter-tool" onchange="loadLogs()">
+                        <option value="">All Tools</option>
+                        <option value="ChatGPT">ChatGPT</option>
+                        <option value="Gemini">Gemini</option>
+                        <option value="Claude">Claude</option>
+                    </select>
+                </div>
+                <table id="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>User Proxy</th>
+                            <th>AI Tool</th>
+                            <th>Action</th>
+                            <th>Data Types Detected</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <div class="settings-section">
+                    <div class="settings-title">🛡️ Policy Level</div>
+                    <div class="policy-options">
+                        <div class="policy-card" id="mode-relaxed" onclick="updatePolicyMode('RELAXED')">
+                            <h3>Relaxed</h3>
+                            <p>Warns on high risk only. Minimize friction.</p>
+                        </div>
+                        <div class="policy-card active" id="mode-standard" onclick="updatePolicyMode('STANDARD')">
+                            <h3>Standard</h3>
+                            <p>Balanced security. Recommended for organizations.</p>
+                        </div>
+                        <div class="policy-card" id="mode-strict" onclick="updatePolicyMode('STRICT')">
+                            <h3>Strict</h3>
+                            <p>Blocks any sensitive data attempt.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🌐 Language & Localization</div>
+                    <div class="form-group" style="display:flex; gap: 20px;">
+                        <div>
+                            <label>Manage Available Languages</label>
+                            <div style="display:flex; gap:15px; margin-top:10px;">
+                                <label style="font-weight: 400;"><input type="checkbox" checked id="set-lang-en">
+                                    English</label>
+                                <label style="font-weight: 400;"><input type="checkbox" checked id="set-lang-he"> Hebrew
+                                    (עברית)</label>
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <label>Company Default Language</label>
+                            <select id="set-default-lang" style="max-width:200px">
+                                <option value="en">English</option>
+                                <option value="he">Hebrew</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveLanguageSettings()">Update Locales</button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">👥 Team Management</div>
+                    <button class="btn btn-outline" onclick="inviteUser()" style="margin-bottom: 20px;">+ Invite Team
+                        Member</button>
+                    <table id="team-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>admin@company.com</td>
+                                <td>Admin</td>
+                                <td><span class="badge badge-allow">ACTIVE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🏅 Badge & Trust Marketing</div>
+                    <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-muted);">
+                        Show your clients you care about data protection. Generate a secure badge for your website or
+                        email signature.
+                    </p>
+                    <button class="btn btn-primary" onclick="generateBadge()">Generate Responsible AI Badge</button>
+
+                    <div id="badge-preview-container"
+                        style="display: none; margin-top: 20px; padding: 20px; border: 1px dashed var(--border); border-radius: 8px;">
+                        <div style="display: flex; gap: 30px; align-items: flex-start;">
+                            <div>
+                                <label
+                                    style="display:block; font-size:12px; margin-bottom:8px; color:var(--text-muted);">Preview</label>
+                                <div id="badge-img-display"></div>
+                            </div>
+                            <div style="flex: 1;">
+                                <label
+                                    style="display:block; font-size:12px; margin-bottom:8px; color:var(--text-muted);">Embed
+                                    Code (Paste into your footer)</label>
+                                <textarea id="badge-embed-code"
+                                    style="width: 100%; height: 80px; font-family: monospace; font-size: 12px; padding: 10px; border-radius: 4px; border: 1px solid var(--border);"
+                                    readonly></textarea>
+                                <button class="btn btn-outline"
+                                    style="margin-top: 10px; font-size: 12px; padding: 5px 10px;"
+                                    onclick="copyBadgeCode()">Copy Snippet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">📖 Resources</div>
+                    <a href="/docs/install.html" target="_blank"
+                        style="color: var(--primary); text-decoration: none; font-weight: 600;">How to install SafeAI
+                        Assistant across your organization →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Tab -->
+    <div id="subscription" class="tab-content">
+        <div class="card">
+            <div class="settings-section">
+                <div class="settings-title">💳 Subscription & Plan</div>
+                <div id="sub-plan-summary"
+                    style="font-size: 18px; margin-bottom: 20px; padding: 20px; background: #eef2ff; border-radius: 12px; border-left: 5px solid var(--primary);">
+                    Loading plan information...
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Licensed Seats</div>
+                        <div class="metric-value" id="sub-seats-total">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Active Users</div>
+                        <div class="metric-value" id="sub-users-active">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Billing Status</div>
+                        <div class="metric-value" id="sub-status" style="font-size: 20px;">Active</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Next Billing Date</div>
+                        <div class="metric-value" id="sub-next-date" style="font-size: 20px;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-title">📊 Usage Highlights (Current Month)</div>
+                <div style="display: flex; gap: 20px;">
+                    <div class="metric-card" style="flex: 1;">
+                        <div class="metric-label">Prompts Checked</div>
+                        <div class="metric-value" id="sub-usage-prompts">0</div>
+                    </div>
+                    <div class="metric-card" style="flex: 1;">
+                        <div class="metric-label">Documents Analyzed</div>
+                        <div class="metric-value" id="sub-usage-docs">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-title">⚙️ Actions</div>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn btn-primary" onclick="upgradePlan()">Upgrade to Pro</button>
+                    <button class="btn btn-outline" onclick="switchBillingPeriod()">Switch to Yearly Billing</button>
+                    <button class="btn btn-outline" style="color: var(--danger); border-color: #ffcdd2;"
+                        onclick="cancelSubscription()">Cancel Renewal</button>
+                </div>
+                <p style="margin-top: 15px; font-size: 13px; color: var(--text-muted);">
+                    Payment and invoicing are managed via our secure partner portal.
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let timelineChart, typeChart;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'overview') loadStats();
+            if (tabId === 'details') loadLogs();
+            if (tabId === 'subscription') loadSubscription();
+        }
+
+        async function loadStats() {
+            const range = document.getElementById('time-range').value;
+            try {
+                const res = await fetch(`${API_URL}/admin/dashboard/stats?range=${range}`);
+                const stats = await res.json();
+
+                document.getElementById('stat-prompts').textContent = stats.total_checks || 0;
+                document.getElementById('stat-warnings').textContent = stats.warnings_shown || 0;
+                document.getElementById('stat-blocks').textContent = stats.messages_blocked || 0;
+                document.getElementById('stat-fixed').textContent = stats.fixed_with_safeai || 0;
+                document.getElementById('stat-users').textContent = stats.users_protected || 0;
+
+                loadCharts();
+            } catch (e) {
+                console.error('Stats loading failed', e);
+            }
+        }
+
+        async function loadCharts() {
+            try {
+                const res = await fetch(`${API_URL}/admin/dashboard/charts`);
+                const data = await res.json();
+
+                renderTimeline(data.timeline);
+                renderTypeDistribution(data.topTypes);
+            } catch (e) {
+                console.error('Charts loading failed', e);
+            }
+        }
+
+        function renderTimeline(timeline) {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+            if (timelineChart) timelineChart.destroy();
+
+            timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeline.map(t => new Date(t.date).toLocaleDateString()),
+                    datasets: [
+                        {
+                            label: 'Warnings',
+                            data: timeline.map(t => t.warnings),
+                            borderColor: '#ff9800',
+                            tension: 0.3,
+                            fill: false
+                        },
+                        {
+                            label: 'Blocks',
+                            data: timeline.map(t => t.blocks),
+                            borderColor: '#f44336',
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function renderTypeDistribution(types) {
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            if (typeChart) typeChart.destroy();
+
+            typeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: types.map(t => t.type),
+                    datasets: [{
+                        data: types.map(t => t.count),
+                        backgroundColor: ['#667eea', '#764ba2', '#4caf50', '#ff9800', '#f44336']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        async function loadLogs() {
+            const userFilter = document.getElementById('filter-user').value;
+            const actionFilter = document.getElementById('filter-action').value;
+            const toolFilter = document.getElementById('filter-tool').value;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/dashboard/logs`);
+                let logs = await res.json();
+
+                // Apply local filters for dynamic feel
+                if (userFilter) logs = logs.filter(l => l.user_alias.toLowerCase().includes(userFilter.toLowerCase()));
+                if (actionFilter) logs = logs.filter(l => l.action === actionFilter);
+                if (toolFilter) logs = logs.filter(l => l.tool.toLowerCase().includes(toolFilter.toLowerCase()));
+
+                const tbody = document.getElementById('logs-body');
+                tbody.innerHTML = logs.map(l => `
+                    <tr>
+                        <td style="color: #888">${new Date(l.timestamp).toLocaleString()}</td>
+                        <td style="font-family: monospace"><strong>${l.user_alias}</strong></td>
+                        <td>${l.tool}</td>
+                        <td><span class="badge badge-${l.action.toLowerCase()}">${l.action}</span></td>
+                        <td>${renderDataTypeIcons(l.data_types)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Logs loading failed', e);
+            }
+        }
+
+        function renderDataTypeIcons(findings) {
+            if (!findings || findings.length === 0) return '<span style="color:#bbb">None</span>';
+            // Extract types and dedup
+            const types = [...new Set(findings.map(f => f.type))];
+            return types.map(t => `<span class="data-type-icon" title="${t}">${t.charAt(0)}</span>`).join('');
+        }
+
+        async function updatePolicyMode(mode) {
+            document.querySelectorAll('.policy-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`mode-${mode.toLowerCase()}`).classList.add('active');
+
+            try {
+                await fetch(`${API_URL}/admin/policy/mode`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tenantId: 'demo-tenant', mode })
+                });
+            } catch (e) { console.error('Policy update failed', e); }
+        }
+
+        async function saveLanguageSettings() {
+            const enabled_languages = [];
+            if (document.getElementById('set-lang-en').checked) enabled_languages.push('en');
+            if (document.getElementById('set-lang-he').checked) enabled_languages.push('he');
+            const default_language = document.getElementById('set-default-lang').value;
+
+            try {
+                await fetch(`${API_URL}/admin/tenant/languages`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tenantId: 'demo-tenant', enabled_languages, default_language })
+                });
+                alert('Settings updated');
+            } catch (e) { console.error('Language update failed', e); }
+        }
+
+        function inviteUser() {
+            const email = prompt('Enter team member email:');
+            if (email) alert('Invite sent to ' + email);
+        }
+
+        async function generateBadge() {
+            try {
+                const res = await fetch(`${API_URL}/admin/badges`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tenantId: 'demo-tenant',
+                        tenantName: 'SafeAI Demo Firm',
+                        type: 'RESPONSIBLE_AI'
+                    })
+                });
+                const badge = await res.json();
+
+                document.getElementById('badge-preview-container').style.display = 'block';
+                document.getElementById('badge-img-display').innerHTML = `
+                    <img src="${badge.pngUrl}" width="200" height="100" style="border: 1px solid var(--border); border-radius: 8px;">
+                `;
+                document.getElementById('badge-embed-code').value = badge.embedCode;
+            } catch (e) {
+                console.error('Badge generation failed', e);
+                alert('Failed to generate badge. Check server connection.');
+            }
+        }
+
+        async function loadSubscription() {
+            try {
+                const res = await fetch(`${API_URL}/admin/billing/subscription`);
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error);
+
+                document.getElementById('sub-plan-summary').innerHTML = `
+                    Your firm is on the <strong>${data.planName}</strong> plan, billed <strong>${data.billingPeriod.toLowerCase()}</strong>.
+                `;
+
+                document.getElementById('sub-seats-total').textContent = data.seatsLicensed;
+                document.getElementById('sub-users-active').textContent = data.activeUsers;
+                document.getElementById('sub-status').textContent = data.billingStatus;
+                document.getElementById('sub-status').style.color = data.billingStatus === 'Active' ? 'var(--success)' : 'var(--warning)';
+                document.getElementById('sub-next-date').textContent = data.nextBillingDate;
+
+                document.getElementById('sub-usage-prompts').textContent = data.usageHighlights.promptsChecked;
+                document.getElementById('sub-usage-docs').textContent = data.usageHighlights.documentsAnalyzed;
+
+            } catch (e) {
+                console.error('Subscription load failed', e);
+                document.getElementById('sub-plan-summary').textContent = 'Failed to load subscription info. Please try again.';
+            }
+        }
+
+        async function upgradePlan() {
+            if (confirm('Would you like to upgrade to the Pro plan for $49/month?')) {
+                try {
+                    await fetch(`${API_URL}/admin/billing/subscription/upgrade`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: 'pro' })
+                    });
+                    loadSubscription();
+                    alert('Successfully upgraded to Pro!');
+                } catch (e) { alert('Upgrade failed'); }
+            }
+        }
+
+        async function switchBillingPeriod() {
+            if (confirm('Switch to yearly billing to save 20%?')) {
+                try {
+                    await fetch(`${API_URL}/admin/billing/subscription/upgrade`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ period: 'Yearly' })
+                    });
+                    loadSubscription();
+                    alert('Billing period updated to Yearly');
+                } catch (e) { alert('Update failed'); }
+            }
+        }
+
+        async function cancelSubscription() {
+            if (confirm('Are you sure you want to cancel your SafeAI protection renewal?')) {
+                try {
+                    await fetch(`${API_URL}/admin/billing/subscription/cancel`, { method: 'POST' });
+                    loadSubscription();
+                    alert('Your protection renewal has been cancelled.');
+                } catch (e) { alert('Cancellation failed'); }
+            }
+        }
+
+        function copyBadgeCode() {
+            const textarea = document.getElementById('badge-embed-code');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Badge embed code copied to clipboard!');
+        }
+
+        // Initial load
+        window.onload = () => {
+            loadStats();
+        };
+
+    </script>
+</body>
+
+</html>

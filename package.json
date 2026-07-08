@@ -1,0 +1,21 @@
+{
+  "name": "safeai-full-project",
+  "version": "2.0.0",
+  "description": "SafeAI Assistant - Browser extension for safe AI usage",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && nodemon server.js",
+    "build": "cd backend && npm install",
+    "test": "cd backend && npm test"
+  },
+  "keywords": [
+    "security",
+    "ai",
+    "browser-extension",
+    "pii",
+    "anonymization"
+  ],
+  "author": "SafeAI Assistant Team",
+  "license": "MIT"
+}

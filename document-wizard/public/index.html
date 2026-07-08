@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeAI Document Copilot</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .copilot-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+      height: calc(100vh - 200px);
+    }
+
+    .document-preview {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      overflow-y: auto;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    .chat-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .chat-header p {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #f9fafb;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: white;
+      border-radius: 12px 12px 0 12px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: white;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px 12px 12px 0;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .message-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .chat-input-container {
+      padding: 16px;
+      border-top: 1px solid #e5e7eb;
+      background: white;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .send-btn {
+      padding: 12px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .typing-indicator {
+      display: none;
+      padding: 12px 16px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      align-self: flex-start;
+      max-width: 85%;
+    }
+
+    .typing-indicator.show {
+      display: block;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dots span {
+      width: 8px;
+      height: 8px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .summary-box {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px 0;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .summary-box p {
+      margin: 0;
+      color: #047857;
+      line-height: 1.6;
+    }
+
+    .quick-questions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .quick-question-btn {
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .quick-question-btn:hover {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>📄 SafeAI Document Copilot</h1>
+      <p class="subtitle">Upload, analyze, and chat with your documents securely</p>
+    </header>
+
+    <main>
+      <!-- Upload Section -->
+      <section id="upload-section" class="section active">
+        <div class="upload-area" id="upload-area">
+          <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <h2>Drop your document here</h2>
+          <p>or click to browse</p>
+          <p class="supported-formats">Supported: PDF, DOCX, TXT (Max 10MB)</p>
+          <input type="file" id="file-input" accept=".pdf,.docx,.doc,.txt" hidden>
+        </div>
+
+        <div id="file-info" class="file-info" style="display: none;">
+          <div class="file-details">
+            <svg class="file-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+              <polyline points="13 2 13 9 20 9"></polyline>
+            </svg>
+            <div>
+              <div class="file-name" id="file-name"></div>
+              <div class="file-size" id="file-size"></div>
+            </div>
+          </div>
+          <button id="remove-file" class="btn-icon">×</button>
+        </div>
+
+        <button id="upload-btn" class="btn btn-primary" style="display: none;">
+          Upload & Analyze
+        </button>
+      </section>
+
+      <!-- Copilot Section -->
+      <section id="copilot-section" class="section" style="display: none;">
+        <div class="copilot-container">
+          <!-- Document Preview -->
+          <div class="document-preview">
+            <div class="summary-box" id="summary-box">
+              <h4>📋 Document Summary</h4>
+              <p id="document-summary">Loading...</p>
+            </div>
+            <div id="document-content">
+              <h3>Document Content</h3>
+              <div id="document-text" style="white-space: pre-wrap; line-height: 1.8; color: #555;"></div>
+            </div>
+          </div>
+
+          <!-- Chat Panel -->
+          <div class="chat-panel">
+            <div class="chat-header">
+              <h3>💬 Ask Questions</h3>
+              <p>I'll help you understand this document</p>
+            </div>
+
+            <!-- LLM Provider Selection -->
+            <div class="llm-selection" style="padding: 16px; border-bottom: 1px solid #e0e0e0;">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <label for="llm-provider" style="font-weight: 600; color: #333;">AI Provider:</label>
+                <select id="llm-provider" style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px;">
+                  <option value="openai">OpenAI (GPT)</option>
+                  <option value="gemini">Google Gemini</option>
+                </select>
+              </div>
+
+              <div id="api-key-container" style="margin-top: 12px; display: none;">
+                <label for="api-key" style="display: block; margin-bottom: 6px; font-weight: 500;">API Key:</label>
+                <input type="password" id="api-key" placeholder="Enter your API key"
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;">
+                <small style="display: block; margin-top: 4px; color: #666;">
+                  Your API key is stored locally and never sent to our servers
+                </small>
+              </div>
+            </div>
+
+            <div class="quick-questions">
+              <button class="quick-question-btn" data-question="What is this document about?">📄 Summarize</button>
+              <button class="quick-question-btn" data-question="What are the key points?">🔑 Key Points</button>
+              <button class="quick-question-btn" data-question="Are there any risks?">⚠️ Risks</button>
+              <button class="quick-question-btn" data-question="What actions are required?">✅ Actions</button>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <div class="message assistant">
+                <div>👋 Hi! I've analyzed your document. Ask me anything about it!</div>
+                <div class="message-time">Just now</div>
+              </div>
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+              <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="chat-input-container">
+              <div class="chat-input-wrapper">
+                <textarea id="chat-input" class="chat-input" placeholder="Ask a question about your document..."
+                  rows="2"></textarea>
+                <button id="send-btn" class="send-btn">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 24px;">
+          <button id="new-document-btn" class="btn btn-secondary">
+            📄 Upload New Document
+          </button>
+          <button id="download-safe-btn" class="btn btn-primary">
+            ✅ Download Safe Version
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>SafeAI Document Copilot - Secure Document Processing with AI</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
